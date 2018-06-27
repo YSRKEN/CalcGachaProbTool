@@ -114,6 +114,11 @@
             "browserTarget": "CalcGachaProbTool:build",
             "serverTarget": "CalcGachaProbTool:server",
             "route": "shell"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "CalcGachaProbTool:build:production"
+            }
           }
         }
       }
