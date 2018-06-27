@@ -6,8 +6,9 @@
 # デバッグビルド・リリースビルド
 
 - 今回の場合、`ng run CalcGachaProbTool:app-shell:production`でリリースビルド可能
-- また、`npx pushstate-server ./dist/CalcGachaProbTool`とすれば、デフォルトで[localhostの9000番ポート](http://localhost:9000)にWebサーバーが起動してくれる
+- また、`npx pushstate-server ./dist/CalcGachaProbTool`とすれば、リリース用ビルドに対し、デフォルトで[localhostの9000番ポート](http://localhost:9000)に簡易のWebサーバーが起動してくれる
+- `ng serve`とすれば、デバッグ用にビルドして、デフォルトで[localhostの4200番ポート](http://localhost:4200)にNode.jsのWebサーバーが起動してくれる
 - 出力先は`root.projects.CalcGachaProbTool.architect.build.options.outputPath`で指定する。相対パスの起点は、`angular.json`が存在する位置となる
-- `ng serve`とすれば、デバッグ用にビルドしてWebサーバー上で動作する。前者との違いは、Node.js成分が多いこと？
+- デバッグ用とリリース用の違いは、主に「ServiceWorkerが機能するか」というところ
 
 ![image](https://user-images.githubusercontent.com/3734392/42000925-47dadeac-7a9d-11e8-8ca5-d348d218e33c.png)
