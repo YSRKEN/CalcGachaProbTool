@@ -107,6 +107,14 @@
             "main": "src/main.server.ts",
             "tsConfig": "src/tsconfig.server.json"
           }
+        },
+        "app-shell": {
+          "builder": "@angular-devkit/build-angular:app-shell",
+          "options": {
+            "browserTarget": "CalcGachaProbTool:build",
+            "serverTarget": "CalcGachaProbTool:server",
+            "route": "shell"
+          }
         }
       }
     },
