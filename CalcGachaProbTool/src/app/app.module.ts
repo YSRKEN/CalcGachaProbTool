@@ -8,6 +8,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { RouterModule } from '@angular/router';
 import { MainComponent } from './main/main.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { MainComponent } from './main/main.component';
     AppRoutingModule,
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     RouterModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
