@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { parseCookieValue } from '@angular/common/src/cookie';
 
 @Component({
   selector: 'app-main',
@@ -40,10 +41,10 @@ export class MainComponent implements OnInit {
    * 1回以上成功する確率
    */
   get anySuccessPer(): number{
-    return 95.2;
+    return (1.0 - Math.pow(((100.0 - parseFloat(this.dropPer)) / 100), parseInt(this.gachaCount))) * 100.0;
   }
 
-    /**
+  /**
    * 全て失敗する確率
    */
   get allFailPer(): number{
@@ -54,6 +55,46 @@ export class MainComponent implements OnInit {
    * X％成功する回数
    */
   anySuccessCount(perOfAnySuccess: number): number{
-    return perOfAnySuccess;
+    return Math.ceil(Math.log(1.0 - 1.0 * perOfAnySuccess / 100) / Math.log(1.0 - 1.0 * parseFloat(this.dropPer) / 100));
+  }
+
+  /**
+   * ガチャ回数-10回
+   */
+  subGachaCount10(){
+    const temp = parseInt(this.gachaCount);
+    if(!isNaN(temp)){
+      this.gachaCount = "" + Math.max(temp - 10, 0);
+    }
+  }
+
+  /**
+   * ガチャ回数-1回
+   */
+  subGachaCount1(){
+    const temp = parseInt(this.gachaCount);
+    if(!isNaN(temp)){
+      this.gachaCount = "" + Math.max(temp - 1, 0);
+    }
+  }
+
+  /**
+   * ガチャ回数+1回
+   */
+  addGachaCount1(){
+    const temp = parseInt(this.gachaCount);
+    if(!isNaN(temp)){
+      this.gachaCount = "" + (temp + 1);
+    }
+  }
+
+  /**
+   * ガチャ回数+10回
+   */
+  addGachaCount10(){
+    const temp = parseInt(this.gachaCount);
+    if(!isNaN(temp)){
+      this.gachaCount = "" + (temp + 10);
+    }
   }
 }

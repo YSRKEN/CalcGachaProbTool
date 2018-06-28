@@ -14,25 +14,25 @@
                     </div>
                     <div class="form-group px-3">
                         <label for='gachaCount'>ガチャ回数</label>
-                        <input type='text' class="form-control" id='gachaCount' placeholder="パスワード" name='gachaCount' [(ngModel)]='gachaCount'>
+                        <input type='text' class="form-control" id='gachaCount' placeholder="ガチャ回数" name='gachaCount' [(ngModel)]='gachaCount'>
                         <small class="text-danger">
                             <strong>{{gachaCountError}}</strong>
                         </small>
                     </div>
                     <div class="d-flex">
-                        <button type="button" class="btn btn-primary ml-auto mr-1">＋10回</button>
-                        <button type="button" class="btn btn-primary mx-1">－10回</button>
-                        <button type="button" class="btn btn-primary mx-1">＋1回</button>
-                        <button type="button" class="btn btn-primary ml-1 mr-auto">－1回</button>
+                        <button type="button" class="btn btn-primary mr-1 ml-auto" (click)="subGachaCount10()">－10回</button>
+                        <button type="button" class="btn btn-primary mx-1" (click)="subGachaCount1()">－1回</button>
+                        <button type="button" class="btn btn-primary mx-1" (click)="addGachaCount1()">＋1回</button>
+                        <button type="button" class="btn btn-primary mr-auto ml-1" (click)="addGachaCount10()">＋10回</button>
                     </div>
                 </form>
             </div>
             <div class="my-3 border py-3">
                 <ul>
-                    <li>1回以上成功する確率：{{anySuccessPer}}％</li>
-                    <li>全て失敗する確率：{{allFailPer}}％</li>
+                    <li>1回以上成功する確率：{{anySuccessPer | number:'1.1-1'}}％</li>
+                    <li>全て失敗する確率：{{allFailPer | number:'1.1-1'}}％</li>
                     <div *ngFor="let perOfAnySuccess of perList">
-                        <li>{{perOfAnySuccess}}％成功する回数：{{anySuccessCount(perOfAnySuccess)}}</li>
+                        <li>{{perOfAnySuccess}}％以上成功するまでの回数：{{anySuccessCount(perOfAnySuccess)}}</li>
                     </div>
                 </ul>
             </div>
