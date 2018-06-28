@@ -24,7 +24,7 @@ export class MainComponent implements OnInit {
   gachaCount: string = "100";
 
   /**
-   * dropPerのエラー欄
+   * gachaCountのエラー欄
    */
   gachaCountError: string = "";
 
@@ -96,5 +96,56 @@ export class MainComponent implements OnInit {
     if(!isNaN(temp)){
       this.gachaCount = "" + (temp + 10);
     }
+  }
+
+  /**
+   * ドロップ率が変化した際の処理
+   */
+  changeDropPer(event: any){
+    this.dropPer = event;
+
+    // そもそも数値なのか？
+    const temp = parseFloat(this.dropPer);
+    if(isNaN(temp)){
+      this.dropPerError = "エラー：数値を入力してください。";
+      return;
+    }
+
+    // 負数じゃないか？
+    if(temp < 0){
+      this.dropPerError = "エラー：0以上の実数を入力してください。";
+      return;
+    }
+    
+    this.dropPerError = "";
+  }
+
+  /**
+   * ガチャ回数が変化した際の処理
+   */
+  changeGachaCount(event: any){
+    this.gachaCount = event;
+
+    // そもそも数値なのか？
+    const temp = parseInt(this.gachaCount);
+    if(isNaN(temp)){
+      this.gachaCountError = "エラー：数値を入力してください。";
+      return;
+    }
+
+    // 整数入力か？
+    const temp2 = parseFloat(this.gachaCount);
+    if(temp != temp2){
+      this.gachaCountError = "エラー：整数で入力してください。";
+      return;
+    }
+
+    // 負数じゃないか？
+    if(temp < 0){
+      this.gachaCountError = "エラー：0以上の数を入力してください。";
+      return;
+    }
+
+    this.gachaCountError = "";
   }
 }

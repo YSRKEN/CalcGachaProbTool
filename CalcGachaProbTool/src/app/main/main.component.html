@@ -7,14 +7,16 @@
                 <form>
                     <div class="form-group px-3">
                         <label for='dropPer'>ドロップ率(％)</label>
-                        <input type='text' class="form-control" id="dropPer" placeholder="ドロップ率(％)" name='dropPer' [(ngModel)]='dropPer'>
+                        <input type='text' class="form-control" id="dropPer" placeholder="ドロップ率(％)" name='dropPer'
+                            [ngModel]="dropPer" (ngModelChange)="changeDropPer($event)">
                         <small class="text-danger">
                             <strong>{{dropPerError}}</strong>
                         </small>
                     </div>
                     <div class="form-group px-3">
                         <label for='gachaCount'>ガチャ回数</label>
-                        <input type='text' class="form-control" id='gachaCount' placeholder="ガチャ回数" name='gachaCount' [(ngModel)]='gachaCount'>
+                        <input type='text' class="form-control" id='gachaCount' placeholder="ガチャ回数" name='gachaCount'
+                            [ngModel]="gachaCount" (ngModelChange)="changeGachaCount($event)">
                         <small class="text-danger">
                             <strong>{{gachaCountError}}</strong>
                         </small>
