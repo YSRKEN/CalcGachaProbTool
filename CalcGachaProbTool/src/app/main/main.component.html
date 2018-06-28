@@ -33,9 +33,7 @@
                 <ul>
                     <li>1回以上成功する確率：{{anySuccessPer | number:'1.1-1'}}％</li>
                     <li>全て失敗する確率：{{allFailPer | number:'1.1-1'}}％</li>
-                    <div *ngFor="let perOfAnySuccess of perList">
-                        <li>{{perOfAnySuccess}}％以上成功するまでの回数：{{anySuccessCount(perOfAnySuccess)}}</li>
-                    </div>
+                    <li *ngFor="let perOfAnySuccess of perList">{{perOfAnySuccess}}％以上成功するまでの回数：{{anySuccessCount(perOfAnySuccess)}}</li>
                 </ul>
             </div>
         </div>
