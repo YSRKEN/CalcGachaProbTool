@@ -3,16 +3,16 @@
         <div class="col-xs-12 col-sm-8 col-md-6 mx-auto my-3">
             <h1 class="text-center d-none d-sm-block">ガチャ確率計算機</h1>
             <h2 class="text-center d-xs-block d-sm-none">ガチャ確率計算機</h2>
-            <div class="my-3 border p-3">
+            <div class="my-3 border py-3">
                 <form>
-                    <div class="form-group">
+                    <div class="form-group px-3">
                         <label for='dropPer'>ドロップ率(％)</label>
                         <input type='text' class="form-control" id="dropPer" placeholder="ドロップ率(％)" name='dropPer' [(ngModel)]='dropPer'>
                         <small class="text-danger">
                             <strong>{{dropPerError}}</strong>
                         </small>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group px-3">
                         <label for='gachaCount'>ガチャ回数</label>
                         <input type='text' class="form-control" id='gachaCount' placeholder="パスワード" name='gachaCount' [(ngModel)]='gachaCount'>
                         <small class="text-danger">
