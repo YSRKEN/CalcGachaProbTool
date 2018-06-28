@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 col-md-6 mx-auto my-3">
+            <h1 class="text-center d-none d-sm-block">ガチャ確率計算機</h1>
+            <h2 class="text-center d-xs-block d-sm-none">ガチャ確率計算機</h2>
+            <div class="my-3 border py-3">
+                <form>
+                    <div class="form-group px-3">
+                        <label for='dropPer'>ドロップ率(％)</label>
+                        <input type='text' class="form-control" id="dropPer" placeholder="ドロップ率(％)" name='dropPer'
+                            [ngModel]="dropPer" (ngModelChange)="changeDropPer($event)">
+                        <small class="text-danger">
+                            <strong>{{dropPerError}}</strong>
+                        </small>
+                    </div>
+                    <div class="form-group px-3">
+                        <label for='gachaCount'>ガチャ回数</label>
+                        <input type='text' class="form-control" id='gachaCount' placeholder="ガチャ回数" name='gachaCount'
+                            [ngModel]="gachaCount" (ngModelChange)="changeGachaCount($event)">
+                        <small class="text-danger">
+                            <strong>{{gachaCountError}}</strong>
+                        </small>
+                    </div>
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-primary mr-1 ml-auto" (click)="subGachaCount10()">－10回</button>
+                        <button type="button" class="btn btn-primary mx-1" (click)="subGachaCount1()">－1回</button>
+                        <button type="button" class="btn btn-primary mx-1" (click)="addGachaCount1()">＋1回</button>
+                        <button type="button" class="btn btn-primary mr-auto ml-1" (click)="addGachaCount10()">＋10回</button>
+                    </div>
+                </form>
+            </div>
+            <div class="my-3 border py-3">
+                <ul>
+                    <li>1回以上成功する確率：{{anySuccessPer | number:'1.1-1'}}％</li>
+                    <li>全て失敗する確率：{{allFailPer | number:'1.1-1'}}％</li>
+                    <div *ngFor="let perOfAnySuccess of perList">
+                        <li>{{perOfAnySuccess}}％以上成功するまでの回数：{{anySuccessCount(perOfAnySuccess)}}</li>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
