@@ -54,10 +54,95 @@ export class TestProbComponent implements OnInit {
   }
 
   /**
+   * 範囲[a,b]においてシンプソン積分を行う
+   * @param a a
+   * @param b b
+   * @param func 積分する関数
+   */
+  private simpsonMethod(a: number, b: number, n: number, func: (x: number) => number): number {
+    // 分割幅hを求める
+    const h = (b - a) / n;
+
+    // ヘルパーメソッド
+    const index = (i: number) => a + i * h;
+
+    // 計算を行う
+    let sum = func(a) + func(b);
+    for (let j = 1; j < n / 2; ++j) {
+      sum += 2.0 * func(index(2 * j));
+    }
+    for (let j = 1; j <= n / 2; ++j) {
+      sum += 4.0 * func(index(2 * j - 1));
+    }
+    sum *= h / 3;
+    return sum;
+  }
+
+  /**
+   * ベータ関数B(a,b)の値を求める
+   */
+  private betaFunction(a: number, b: number): number {
+    // 内部の関数をラムダ式で定義する
+    const func = (t) => (Math.pow(t, a - 1.0) * Math.pow(1.0 - t, b - 1.0));
+
+    // シンプソン積分した結果を返す
+    return this.simpsonMethod(0.0, 1.0, 100, func);
+  }
+
+  /**
+   * ベータ分布の累積密度関数(BetaCDF(x,a,b))を求める
+   * @param x x
+   * @param a a
+   * @param b b
+   */
+  private betaCDF(x: number, a: number, b: number): number {
+    const func = (t) => (Math.pow(t, a - 1.0) * Math.pow(1.0 - t, b - 1.0));
+    return this.simpsonMethod(0.0, x, 100, func) / this.betaFunction(a, b);
+  }
+
+  /**
+   * ベータ分布の累積密度関数の逆関数(BetaCDF^-1(p,a,b))を求める
+   * @param p p
+   * @param a a
+   * @param b b
+   */
+  private inverseBetaCDF(p: number, a: number, b: number): number {
+    // 前提となる関数を定義する
+    const func = (x) => (this.betaCDF(x, a, b) - p);
+
+    // 初期値を設定する
+    let x1 = 0.0;
+    let f1 = func(x1);
+    let x2 = 1.0;
+    let x3 = 0.0;
+    let eps = 1.0e-6;
+
+    //二分法で探索する
+    while (x2 - x1 > eps) {
+      x3 = (x1 + x2) / 2;
+      let f3 = func(x3);
+      if (f1 * f3 < 0.0) {
+        x2 = x3;
+      }
+      else {
+        x1 = x3;
+      }
+    }
+
+    // 結果を返す
+    return x3;
+  }
+
+  /**
    * 95％信頼区間を、Clopper-Pearson methodで求める
    */
   private clopperPearsonMethod() {
-    
+    const x = 0.95; //95%信頼区間であることを表す
+    const a = 1.0 - x;
+    const n = parseInt(this.gachaCount);  //ガチャ回数
+    const k = parseInt(this.dropCount);   //ドロップ回数
+		this.confidenceIntervalLB = 100.0 * (1.0 - this.inverseBetaCDF((1.0 - a / 2), n - k + 1, k));
+		this.confidenceIntervalUB = 100.0 * (1.0 - this.inverseBetaCDF((a / 2), n - k, k + 1));
   }
 
   /** 組み合わせaCbを実数で求める
@@ -65,7 +150,7 @@ export class TestProbComponent implements OnInit {
    * @param a aの値
    * @param b bの値
    */
-  private comb(a: number, b: number){
+  private comb(a: number, b: number): number{
     let result: number = 1.0;
     for (let num1 = a, num2 = b, r = 0; r < b; --num1, --num2, ++r) {
       result *= 1.0 * num1;
@@ -80,7 +165,7 @@ export class TestProbComponent implements OnInit {
    * @param b 成功回数
    * @param s 成功確率
   */
-  private prob(a: number, b: number, s: number){
+  private prob(a: number, b: number, s: number): number{
     let result = this.comb(a, b);
     for (let i = 0; i < b; ++i)
       result *= s;
