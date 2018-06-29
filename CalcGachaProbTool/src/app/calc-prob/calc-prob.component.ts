@@ -117,6 +117,12 @@ export class CalcProbComponent implements OnInit {
       return;
     }
     
+    // 100％より大きくなっていないか？
+    if(temp > 100){
+      this.dropPerError = "エラー：パーセンテージは100％までです。";
+      return;
+    }
+
     this.dropPerError = "";
   }
 
