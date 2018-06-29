@@ -9,12 +9,14 @@ import { RouterModule } from '@angular/router';
 import { MainComponent } from './main/main.component';
 import { FormsModule } from '@angular/forms';
 import { CalcProbComponent } from './calc-prob/calc-prob.component';
+import { TestProbComponent } from './test-prob/test-prob.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
-    CalcProbComponent
+    CalcProbComponent,
+    TestProbComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
