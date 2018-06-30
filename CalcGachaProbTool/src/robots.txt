@@ -1,1 +1,4 @@
-sitemap：http://localhost:9000/sitemap.xml
+User-agent: *
+Allow: /
+
+Sitemap: https://calc-gacha-prob-tool.firebaseapp.com/sitemap.xml
