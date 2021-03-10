@@ -12,3 +12,11 @@
 - デバッグ用とリリース用の違いは、主に「ServiceWorkerが機能するか」というところ
 
 ![image](https://user-images.githubusercontent.com/3734392/42000925-47dadeac-7a9d-11e8-8ca5-d348d218e33c.png)
+
+# デプロイ
+
+- 今回はFirebaseを使用
+  - [calc-gacha-prob-tool](https://console.firebase.google.com/project/calc-gacha-prob-tool/overview)
+ 
+ - デプロイ自体も、Angularプロジェクト自体に`firebase init`して`firebase.json`を編集して`firebase deploy`するだけなので超簡単！
+  - [Firebase CLIでAngularアプリをFirebase Hostingにデプロイする](https://qiita.com/daikiojm/items/89f46bd83c9a2285bbc6)
