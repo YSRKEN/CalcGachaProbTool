@@ -1,24 +1,22 @@
-import Decimal from 'decimal.js';
-import React from 'react';
+import React, { ChangeEvent, useContext } from 'react';
 import { Button, Form, ListGroup } from 'react-bootstrap';
+import { CalcProbContext } from '../store/CalcProbStore';
 
 const CalcProb: React.FC = () => {
-  const xPer = new Decimal('3');
-  const x = xPer.div(100);
-  const n = 100;
-  const ONE = new Decimal(1);
-  const prob = ONE.minus(ONE.minus(x).pow(n));
-  const probPer = prob.mul(100);
-  console.log(`ドロップ率${xPer.toString()}％、ガチャ回数${n}回⇒1枚以上ドロップ率${probPer.toFixed(1)}％`);
+  const { dropPer, gachaCount, anyDropPer, notDropPer, dispatch } = useContext(CalcProbContext);
 
   return <Form>
     <Form.Group>
       <Form.Label>ドロップ率（％）</Form.Label>
-      <Form.Control placeholder="0以上100以下の実数を入力" />
+      <Form.Control placeholder="0以上100以下の実数を入力" value={dropPer} onChange={(e: ChangeEvent<HTMLInputElement>) => {
+        dispatch({ type: 'setDropPer', message: e.currentTarget.value });
+      }} />
     </Form.Group>
     <Form.Group>
       <Form.Label>ガチャ回数</Form.Label>
-      <Form.Control placeholder="0以上の整数を入力" />
+      <Form.Control placeholder="0以上の整数を入力" value={gachaCount} onChange={(e: ChangeEvent<HTMLInputElement>) => {
+        dispatch({ type: 'setGachaCount', message: e.currentTarget.value });
+      }} />
     </Form.Group>
     <Form.Group className="d-none d-sm-block text-center">
       <Button className="mr-3">-10回</Button>
@@ -34,8 +32,8 @@ const CalcProb: React.FC = () => {
     </Form.Group>
     <hr />
     <ListGroup className="d-none d-sm-block" variant="flush">
-      <ListGroup.Item>1枚以上ドロップする確率：xxx ％</ListGroup.Item>
-      <ListGroup.Item>1枚もドロップしない確率：xxx ％</ListGroup.Item>
+      <ListGroup.Item>1枚以上ドロップする確率：{anyDropPer} ％</ListGroup.Item>
+      <ListGroup.Item>1枚もドロップしない確率：{notDropPer} ％</ListGroup.Item>
       <ListGroup.Item>50％以上ドロップするガチャ回数：xxx 回</ListGroup.Item>
       <ListGroup.Item>95％以上ドロップするガチャ回数：xxx 回</ListGroup.Item>
       <ListGroup.Item>99％以上ドロップするガチャ回数：xxx 回</ListGroup.Item>
