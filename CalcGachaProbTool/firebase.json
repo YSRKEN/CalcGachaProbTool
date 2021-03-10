@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "target": "calc-gacha-prob-tool",
     "public": "dist/CalcGachaProbTool",
     "ignore": [
       "firebase.json",
