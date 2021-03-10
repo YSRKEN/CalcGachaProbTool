@@ -1,25 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Col, Container, Row } from 'react-bootstrap';
+import Title from './container/Title';
+import AppInfo from './container/AppInfo';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <Row className="my-3">
+        <Col className="text-center">
+          <Title />
+        </Col>
+      </Row>
+      <Row>
+        <Col className="text-center">
+          <AppInfo />
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
