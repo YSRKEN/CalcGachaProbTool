@@ -6,6 +6,10 @@ const CalcProb: React.FC = () => {
   const { dropPer, gachaCount, anyDropPer, notDropPer,
     gachaCount50Per, gachaCount95Per, gachaCount99Per, dispatch } = useContext(CalcProbContext);
 
+  const addGachaCount = (diff: number) => {
+    dispatch({ type: 'addGachaCount', message: `${diff}` });
+  }
+
   return <Form>
     <Form.Group>
       <Form.Label>ドロップ率（％）</Form.Label>
@@ -20,16 +24,32 @@ const CalcProb: React.FC = () => {
       }} />
     </Form.Group>
     <Form.Group className="d-none d-sm-block text-center">
-      <Button className="mr-3">-10回</Button>
-      <Button className="mr-3">-1回</Button>
-      <Button className="mr-3" variant="danger">+1回</Button>
-      <Button variant="danger">+10回</Button>
+      <Button className="mr-3" onClick={() => {
+        addGachaCount(-10);
+      }}>-10回</Button>
+      <Button className="mr-3" onClick={() => {
+        addGachaCount(-1);
+      }}>-1回</Button>
+      <Button className="mr-3" variant="danger" onClick={() => {
+        addGachaCount(1);
+      }}>+1回</Button>
+      <Button variant="danger" onClick={() => {
+        addGachaCount(10);
+      }}>+10回</Button>
     </Form.Group>
     <Form.Group className="d-block d-sm-none text-center">
-      <Button className="mr-2">-10回</Button>
-      <Button className="mr-2">-1回</Button>
-      <Button className="mr-2" variant="danger">+1回</Button>
-      <Button variant="danger">+10回</Button>
+      <Button className="mr-2" onClick={() => {
+        addGachaCount(-10);
+      }}>-10回</Button>
+      <Button className="mr-2" onClick={() => {
+        addGachaCount(-1);
+      }}>-1回</Button>
+      <Button className="mr-2" variant="danger" onClick={() => {
+        addGachaCount(1);
+      }}>+1回</Button>
+      <Button variant="danger" onClick={() => {
+        addGachaCount(10);
+      }}>+10回</Button>
     </Form.Group>
     <hr />
     <ListGroup className="d-none d-sm-block" variant="flush">

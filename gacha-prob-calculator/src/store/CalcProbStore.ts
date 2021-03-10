@@ -1,7 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 import Decimal from 'decimal.js';
+import { ONE, PROB_50_PER, PROB_95_PER, PROB_99_PER } from "../constant/other";
 
-type ActionType = 'setDropPer' | 'setGachaCount';
+type ActionType = 'setDropPer' | 'setGachaCount' | 'addGachaCount';
 
 interface Action {
   type: ActionType;
@@ -33,19 +34,28 @@ export const useCalcProbStore = (): CalcProbStore => {
       // ドロップ率の計算
       const xPer = new Decimal(dropPer);
       const x = xPer.div(100);
+      if (x.lt(0)) {
+        setAnyDropPer('---');
+        setNotDropPer('---');
+        setGachaCount50Per('---');
+        setGachaCount95Per('---');
+        setGachaCount99Per('---');
+        return;
+      }
       const n = new Decimal(gachaCount).round();
-      const ONE = new Decimal(1);
-      const prob = ONE.sub(ONE.sub(x).pow(n));
-      setAnyDropPer(prob.mul(100).toFixed(2));
-      setNotDropPer(ONE.sub(prob).mul(100).toFixed(2));
+      if (n.gte(0)) {
+        const prob = ONE.sub(ONE.sub(x).pow(n));
+        setAnyDropPer(prob.mul(100).toFixed(2));
+        setNotDropPer(ONE.sub(prob).mul(100).toFixed(2));
+      } else {
+        setAnyDropPer('---');
+        setNotDropPer('---');
+      }
 
       // 必要なガチャ回数の計算
       let flg50Per = false;
       let flg95Per = false;
       let flg99Per = false;
-      const PROB_50_PER = new Decimal('0.5');
-      const PROB_95_PER = new Decimal('0.95');
-      const PROB_99_PER = new Decimal('0.99');
       for (let i = 1; i <= 10000; i += 1) {
         const prob2 = ONE.sub(ONE.sub(x).pow(i));
         if (!flg50Per && prob2.gte(PROB_50_PER)) {
@@ -87,6 +97,14 @@ export const useCalcProbStore = (): CalcProbStore => {
       case 'setGachaCount':
         setGachaCount(action.message as string);
         break;
+      case 'addGachaCount': {
+        const diff = parseInt((action.message as string), 10);
+        try {
+          const n = new Decimal(gachaCount).round().add(diff);
+          setGachaCount(n.toString());
+        } catch { }
+        break;
+      }
     }
   };
 
