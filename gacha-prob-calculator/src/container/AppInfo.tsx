@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Button } from "react-bootstrap";
 import { LAST_UP_DATE, PROJECT_URL, TWITTER_SHARE_URL } from "../constant/other";
 

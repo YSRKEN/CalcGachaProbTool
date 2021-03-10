@@ -3,6 +3,7 @@ import './App.css';
 import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
 import Title from './container/Title';
 import AppInfo from './container/AppInfo';
+import CalcProb from './container/CalcProb';
 
 const App: React.FC = () => {
   return (
@@ -21,7 +22,7 @@ const App: React.FC = () => {
         <Col md={6}>
           <Tabs defaultActiveKey="calc" id="main-tab">
             <Tab className="border-bottom border-left border-right p-3" eventKey="calc" title="確率計算">
-              aaa
+              <CalcProb />
             </Tab>
             <Tab className="border-bottom border-left border-right p-3" eventKey="test" title="確率推定">
               bbb
