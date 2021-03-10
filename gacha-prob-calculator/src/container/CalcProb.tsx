@@ -3,7 +3,8 @@ import { Button, Form, ListGroup } from 'react-bootstrap';
 import { CalcProbContext } from '../store/CalcProbStore';
 
 const CalcProb: React.FC = () => {
-  const { dropPer, gachaCount, anyDropPer, notDropPer, dispatch } = useContext(CalcProbContext);
+  const { dropPer, gachaCount, anyDropPer, notDropPer,
+    gachaCount50Per, gachaCount95Per, gachaCount99Per, dispatch } = useContext(CalcProbContext);
 
   return <Form>
     <Form.Group>
@@ -34,16 +35,16 @@ const CalcProb: React.FC = () => {
     <ListGroup className="d-none d-sm-block" variant="flush">
       <ListGroup.Item>1枚以上ドロップする確率：{anyDropPer} ％</ListGroup.Item>
       <ListGroup.Item>1枚もドロップしない確率：{notDropPer} ％</ListGroup.Item>
-      <ListGroup.Item>50％以上ドロップするガチャ回数：xxx 回</ListGroup.Item>
-      <ListGroup.Item>95％以上ドロップするガチャ回数：xxx 回</ListGroup.Item>
-      <ListGroup.Item>99％以上ドロップするガチャ回数：xxx 回</ListGroup.Item>
+      <ListGroup.Item>50％以上ドロップするガチャ回数：{gachaCount50Per} 回</ListGroup.Item>
+      <ListGroup.Item>95％以上ドロップするガチャ回数：{gachaCount95Per} 回</ListGroup.Item>
+      <ListGroup.Item>99％以上ドロップするガチャ回数：{gachaCount99Per} 回</ListGroup.Item>
     </ListGroup>
     <ListGroup className="d-block d-sm-none" variant="flush">
-      <ListGroup.Item>1枚以上ドロップ：xxx ％</ListGroup.Item>
-      <ListGroup.Item>1枚もドロップしない：xxx ％</ListGroup.Item>
-      <ListGroup.Item>50％以上ドロップ：xxx 回</ListGroup.Item>
-      <ListGroup.Item>95％以上ドロップ：xxx 回</ListGroup.Item>
-      <ListGroup.Item>99％以上ドロップ：xxx 回</ListGroup.Item>
+      <ListGroup.Item>1枚以上ドロップ：{anyDropPer} ％</ListGroup.Item>
+      <ListGroup.Item>1枚もドロップしない：{notDropPer} ％</ListGroup.Item>
+      <ListGroup.Item>50％以上ドロップ：{gachaCount50Per} 回</ListGroup.Item>
+      <ListGroup.Item>95％以上ドロップ：{gachaCount95Per} 回</ListGroup.Item>
+      <ListGroup.Item>99％以上ドロップ：{gachaCount99Per}  回</ListGroup.Item>
     </ListGroup>
   </Form>;
 }
