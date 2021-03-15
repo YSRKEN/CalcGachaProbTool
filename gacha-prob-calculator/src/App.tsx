@@ -23,7 +23,7 @@ const App: React.FC = () => {
       </Row>
       <Row className="mt-3 justify-content-md-center">
         <Col md={6}>
-          <Tabs defaultActiveKey="calc" id="main-tab">
+          <Tabs defaultActiveKey="calc" id="main-tab" transition={false}>
             <Tab className="border-bottom border-left border-right p-3" eventKey="calc" title="確率計算">
               <CalcProbContext.Provider value={useCalcProbStore()}>
                 <CalcProb />
