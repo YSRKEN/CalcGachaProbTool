@@ -70,7 +70,6 @@ const calcPvalueBySterne = (a: Decimal, b: Decimal, x: Decimal) => {
       sum = sum.add(temp);
     }
   }
-  // console.log(`calcPvalueBySterne(${a}, ${b}, ${x}) = ${sum}`);
   return sum;
 };
 
@@ -90,7 +89,6 @@ const findByBisection = (minX: Decimal, maxX: Decimal, func: (x: Decimal) => Dec
   while (x2.sub(x1).gt(eps)) {
     x3 = x1.add(x2).div(2);
     const y3 = func(x3);
-    console.log(`${x1} ${x3} ${x2} ${y1} ${y3}`);
     if (y1.mul(y3).lt(ZERO)) {
       x2 = x3;
     }
@@ -111,13 +109,11 @@ const findByBisection = (minX: Decimal, maxX: Decimal, func: (x: Decimal) => Dec
 const calcConfidenceIntervalBySterne = (a: Decimal, b: Decimal, ciPer: Decimal): [Decimal, Decimal] => {
   const param = ONE.sub(ciPer.div(100)).div(2);
   // 下限の算出を行う
-  console.log('下限の算出');
   const ciLB = findByBisection(ZERO, a.div(b), (x: Decimal) => {
     return calcPvalueBySterne(a, b, x).sub(param);
   }, EPS);
 
   // 上限の算出を行う
-  console.log('上限の算出');
   const ciUB = findByBisection(a.div(b), ONE, (x: Decimal) => {
     return calcPvalueBySterne(a, b, x).sub(param);
   }, EPS);
@@ -157,7 +153,6 @@ export const useTestProbStore = (): TestProbStore => {
       /* 「検定と区間推定」                                            */
       /* (https://oku.edu.mie-u.ac.jp/~okumura/stat/tests_and_CI.html) */
       /* を参考に、Sterneの手法に基づく正確なp値を実装した */
-      console.log(`p値の計算`);
       const x = new Decimal(officialDropPer).div(100);
       const result2 = calcPvalueBySterne(a, b, x);
       setPValue(result2.toFixed(3));
