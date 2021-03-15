@@ -6,6 +6,7 @@ import AppInfo from './container/AppInfo';
 import CalcProb from './container/CalcProb';
 import TestProb from './container/TestProb';
 import { CalcProbContext, useCalcProbStore } from './store/CalcProbStore';
+import { TestProbContext, useTestProbStore } from './store/TestProbStore';
 
 const App: React.FC = () => {
   return (
@@ -29,7 +30,9 @@ const App: React.FC = () => {
               </CalcProbContext.Provider>
             </Tab>
             <Tab className="border-bottom border-left border-right p-3" eventKey="test" title="確率推定">
-              <TestProb />
+              <TestProbContext.Provider value={useTestProbStore()}>
+                <TestProb />
+              </TestProbContext.Provider>
             </Tab>
             <Tab className="border-bottom border-left border-right p-3" eventKey="help" title="ヘルプ">
               ccc
