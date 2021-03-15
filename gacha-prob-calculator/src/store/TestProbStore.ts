@@ -24,6 +24,15 @@ interface TestProbStore {
  * @param b bの値
  */
 const combination = (a: number, b: number): Decimal => {
+  /* 以下、簡易コード */
+  let result: number = 1.0;
+  for (let num1 = a, num2 = b, r = 0; r < b; --num1, --num2, ++r) {
+    result *= 1.0 * num1;
+    result /= 1.0 * num2;
+  }
+  return new Decimal(result);
+
+  /* 以下、正式なコード
   let temp1 = new Decimal('1');
   for (let num1 = a, r = 0; r < b; num1--, r++) {
     temp1 = temp1.mul(num1);
@@ -33,6 +42,7 @@ const combination = (a: number, b: number): Decimal => {
     temp2 = temp2.mul(num2);
   }
   return temp1.div(temp2);
+  */
 }
 
 /**
