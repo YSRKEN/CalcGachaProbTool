@@ -4,6 +4,7 @@ import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
 import Title from './container/Title';
 import AppInfo from './container/AppInfo';
 import CalcProb from './container/CalcProb';
+import TestProb from './container/TestProb';
 import { CalcProbContext, useCalcProbStore } from './store/CalcProbStore';
 
 const App: React.FC = () => {
@@ -28,7 +29,7 @@ const App: React.FC = () => {
               </CalcProbContext.Provider>
             </Tab>
             <Tab className="border-bottom border-left border-right p-3" eventKey="test" title="確率推定">
-              bbb
+              <TestProb />
             </Tab>
             <Tab className="border-bottom border-left border-right p-3" eventKey="help" title="ヘルプ">
               ccc
