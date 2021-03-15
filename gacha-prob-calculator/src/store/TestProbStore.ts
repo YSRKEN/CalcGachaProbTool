@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
 import { createContext, useEffect, useState } from "react";
-import { CONFIDENCE_INTERVAL_PER, ONE, ZERO } from "../constant/other";
+import { CONFIDENCE_INTERVAL_PER, EPS, ONE, ZERO } from "../constant/other";
 
 type ActionType = 'setGachaCount' | 'setDropCount' | 'setOfficialDropPer';
 
@@ -15,6 +15,7 @@ interface TestProbStore {
   officialDropPer: string;
   dropPer: string;
   confidenceInterval: [string, string];
+  pValue: string;
   dispatch: (action: Action) => void;
 }
 
@@ -54,55 +55,73 @@ const calcBinomialPDF = (m: Decimal, p: Decimal, n: Decimal): Decimal => {
 };
 
 /**
- * Sterne検定に基づく正確な信頼区間を算出する
- * @param prob 
- * @param n 
- * @param ciPer 
+ * Sterneの手法に基づく正確なp値を算出する
+ * @param a 二項分布における成功回数(ドロップ回数)
+ * @param b 二項分布における試行回数(ガチャ回数)
+ * @param x p値を計算したい公称ドロップ率
+ * @returns p値
  */
-const calcConfidenceIntervalBySterne = (prob: Decimal, n: Decimal, ciPer: Decimal): [Decimal, Decimal] | null => {
-  // PDFの一覧を算出する
-  const pdfList: { x: Decimal, prob: Decimal }[] = [];
-  const cdfList: { x: Decimal, prob: Decimal }[] = [];
-  let cdfSum = ZERO;
-  for (let x = ZERO; x.lte(n); x = x.add(ONE)) {
-    const pdf = calcBinomialPDF(x, prob, n);
-    pdfList.push({ x, prob: pdf });
-    cdfList.push({ x, prob: cdfSum });
-    console.log(x.toString() + ' : ' + pdf.toString() + ' / ' + cdfSum.toString())
-    cdfSum = cdfSum.add(pdf);
-  }
-
-  // PDFの一覧を、確率の降順となるようにソート
-  pdfList.sort((a, b) => {
-    return a.prob.lt(b.prob) ? 1 : a.prob.gt(b.prob) ? -1 : 0;
-  });
-
-  // ソートしたものを上から累計を取っていき、合計値が有意水準を超えるかを判断する
-  let probSum = ZERO;
-  const ci = ciPer.div(100);
-  const xList: Decimal[] = [];
-  for (let i = 0; i < pdfList.length; i++) {
-    const record = pdfList[i];
-    if (probSum.gte(ci)) {
-      break;
+const calcPvalueBySterne = (a: Decimal, b: Decimal, x: Decimal) => {
+  const limitProb = calcBinomialPDF(a, x, b);
+  let sum = ZERO;
+  for (let i = ZERO; i.lte(b); i = i.add(ONE)) {
+    const temp = calcBinomialPDF(i, x, b);
+    if (limitProb.gte(temp)) {
+      sum = sum.add(temp);
     }
-    xList.push(record.x);
-    console.log(record.x.toString() + ' : ' + record.prob.toString() + ' / ' + probSum.toString());
-    probSum = probSum.add(record.prob);
   }
+  // console.log(`calcPvalueBySterne(${a}, ${b}, ${x}) = ${sum}`);
+  return sum;
+};
 
-  // flgがfalseの箇所＝有意水準内の範囲を出力する
-  xList.sort((a, b) => {
-    return a.lt(b) ? -1 : a.gt(b) ? 1 : 0;
-  });
-  if (xList.length === 0) {
-    return null;
-  } else {
-    return [
-      cdfList.filter(pair => pair.x.eq(xList[0]))[0].prob,
-      cdfList.filter(pair => pair.x.eq(xList[xList.length - 1]))[0].prob,
-    ];
+
+/**
+ * 二分法により、関数値f(x)が0になるxの値を検索する
+ * @param minX xの最小値
+ * @param maxX xの最大値
+ * @param func 関数
+ * @param eps しきい値
+ */
+const findByBisection = (minX: Decimal, maxX: Decimal, func: (x: Decimal) => Decimal, eps: Decimal): Decimal => {
+  let x1 = minX;
+  let x2 = maxX;
+  let x3 = minX;
+  let y1 = func(x1);
+  while (x2.sub(x1).gt(eps)) {
+    x3 = x1.add(x2).div(2);
+    const y3 = func(x3);
+    console.log(`${x1} ${x3} ${x2} ${y1} ${y3}`);
+    if (y1.mul(y3).lt(ZERO)) {
+      x2 = x3;
+    }
+    else {
+      x1 = x3;
+      y1 = func(x1);
+    }
   }
+  return x3;
+};
+
+/**
+ * Sterneの手法に基づく正確な信頼区間を算出する
+ * @param a 二項分布における成功回数(ドロップ回数)
+ * @param b 二項分布における試行回数(ガチャ回数)
+ * @param ciPer 信頼区間のパーセンテージ
+ */
+const calcConfidenceIntervalBySterne = (a: Decimal, b: Decimal, ciPer: Decimal): [Decimal, Decimal] => {
+  const param = ONE.sub(ciPer.div(100)).div(2);
+  // 下限の算出を行う
+  console.log('下限の算出');
+  const ciLB = findByBisection(ZERO, a.div(b), (x: Decimal) => {
+    return calcPvalueBySterne(a, b, x).sub(param);
+  }, EPS);
+
+  // 上限の算出を行う
+  console.log('上限の算出');
+  const ciUB = findByBisection(a.div(b), ONE, (x: Decimal) => {
+    return calcPvalueBySterne(a, b, x).sub(param);
+  }, EPS);
+  return [ciLB, ciUB];
 };
 
 export const useTestProbStore = (): TestProbStore => {
@@ -111,6 +130,7 @@ export const useTestProbStore = (): TestProbStore => {
   const [officialDropPer, setOfficialDropPer] = useState('1');
   const [dropPer, setDropPer] = useState('');
   const [confidenceInterval, setConfidenceInterval] = useState<[string, string]>(['', '']);
+  const [pValue, setPValue] = useState('');
 
   // ドロップする確率の計算
   useEffect(() => {
@@ -121,34 +141,40 @@ export const useTestProbStore = (): TestProbStore => {
       if (b.lte(0) || a.lt(0) || a.gt(b)) {
         setDropPer('---');
         setConfidenceInterval(['---', '---']);
+        setPValue('---');
         return;
       }
       const prob = a.div(b);
       if (prob.lt(0)) {
         setDropPer('---');
         setConfidenceInterval(['---', '---']);
+        setPValue('---');
         return;
       }
       setDropPer(prob.mul(100).toFixed(2));
 
-      /* 95％信頼区間の計算                                   */
-      /* 「SASによる二項比率における正確な信頼区間の比較」    */
-      /* (https://www.sas.com/content/dam/SAS/ja_jp/doc/event/sas-user-groups/usergroups14-d-05.pdf) */
-      /* を参考に、Sterne検定に基づく正確な信頼区間を実装した */
-      const result = calcConfidenceIntervalBySterne(prob, b, CONFIDENCE_INTERVAL_PER);
-      if (result !== null) {
-        setConfidenceInterval([
-          result[0].mul(100).toFixed(2),
-          result[1].mul(100).toFixed(2)
-        ]);
-      } else {
-        setConfidenceInterval(['---', '---']);
-      }
+      /* p値の計算                                                     */
+      /* 「検定と区間推定」                                            */
+      /* (https://oku.edu.mie-u.ac.jp/~okumura/stat/tests_and_CI.html) */
+      /* を参考に、Sterneの手法に基づく正確なp値を実装した */
+      console.log(`p値の計算`);
+      const x = new Decimal(officialDropPer).div(100);
+      const result2 = calcPvalueBySterne(a, b, x);
+      setPValue(result2.toFixed(3));
+
+      /* 95％信頼区間の計算                    */
+      /* ↑を応用して、正確な信頼区間を実装した */
+      const result = calcConfidenceIntervalBySterne(a, b, CONFIDENCE_INTERVAL_PER);
+      setConfidenceInterval([
+        result[0].mul(100).toFixed(2),
+        result[1].mul(100).toFixed(2)
+      ]);
     } catch {
       setDropPer('---');
       setConfidenceInterval(['---', '---']);
+      setPValue('---');
     }
-  }, [gachaCount, dropCount]);
+  }, [gachaCount, dropCount, officialDropPer]);
 
   // dispatch関数
   const dispatch = (action: Action) => {
@@ -171,6 +197,7 @@ export const useTestProbStore = (): TestProbStore => {
     officialDropPer,
     dropPer,
     confidenceInterval,
+    pValue,
     dispatch
   };
 };

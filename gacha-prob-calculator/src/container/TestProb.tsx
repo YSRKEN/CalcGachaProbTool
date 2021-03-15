@@ -3,7 +3,7 @@ import { Form, ListGroup } from "react-bootstrap";
 import { TestProbContext } from '../store/TestProbStore';
 
 const TestProb: React.FC = () => {
-  const { gachaCount, dropCount, officialDropPer, dropPer, confidenceInterval, dispatch } = useContext(TestProbContext);
+  const { gachaCount, dropCount, officialDropPer, dropPer, confidenceInterval, pValue, dispatch } = useContext(TestProbContext);
 
   return <Form>
     <Form.Group>
@@ -28,12 +28,12 @@ const TestProb: React.FC = () => {
     <ListGroup className="d-none d-sm-block" variant="flush">
       <ListGroup.Item>ドロップする確率：{dropPer} ％</ListGroup.Item>
       <ListGroup.Item>ドロップ率の95％信頼区間：{confidenceInterval[0]} ％～{confidenceInterval[1]} ％</ListGroup.Item>
-      <ListGroup.Item>公称ドロップ率のp値：p=</ListGroup.Item>
+      <ListGroup.Item>公称ドロップ率のp値：p={pValue}</ListGroup.Item>
     </ListGroup>
     <ListGroup className="d-block d-sm-none" variant="flush">
       <ListGroup.Item>ドロップする確率：{dropPer} ％</ListGroup.Item>
       <ListGroup.Item>↑の95％信頼区間：{confidenceInterval[0]} ％～{confidenceInterval[1]} ％</ListGroup.Item>
-      <ListGroup.Item>公称確率のp値：p=</ListGroup.Item>
+      <ListGroup.Item>公称確率のp値：p={pValue}</ListGroup.Item>
     </ListGroup>
   </Form>;
 }

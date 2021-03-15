@@ -13,3 +13,4 @@ export const PROB_50_PER = new Decimal('0.5');
 export const PROB_95_PER = new Decimal('0.95');
 export const PROB_99_PER = new Decimal('0.99');
 export const CONFIDENCE_INTERVAL_PER = new Decimal('95');  // 今回は95％信頼区間を用いるのでこうした
+export const EPS = new Decimal('0.00000001');
