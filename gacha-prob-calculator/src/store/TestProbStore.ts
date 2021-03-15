@@ -23,15 +23,16 @@ interface TestProbStore {
  * @param a aの値
  * @param b bの値
  */
-const combination = (a: Decimal, b: Decimal): Decimal => {
-  let result = new Decimal('1');
-  for (let num1 = a, num2 = b, r = ZERO;
-    r.lt(b);
-    num1 = num1.sub(ONE), num2 = num2.sub(ONE), r = r.add(ONE)) {
-    result = result.mul(num1);
-    result = result.div(num2);
+const combination = (a: number, b: number): Decimal => {
+  let temp1 = new Decimal('1');
+  for (let num1 = a, r = 0; r < b; num1--, r++) {
+    temp1 = temp1.mul(num1);
   }
-  return result;
+  let temp2 = new Decimal('1');
+  for (let num2 = b, r = 0; r < b; num2--, r++) {
+    temp2 = temp2.mul(num2);
+  }
+  return temp1.div(temp2);
 }
 
 /**
@@ -41,16 +42,16 @@ const combination = (a: Decimal, b: Decimal): Decimal => {
  * @param p 二項分布の1試行における成功確率。0≦p≦1
  * @param n 二項分布における試行回数。n≧m、m∈Z
  */
-const calcBinomialPDF = (m: Decimal, p: Decimal, n: Decimal): Decimal => {
+const calcBinomialPDF = (m: number, p: Decimal, n: number): Decimal => {
   // mが負の数、もしくはmがnより大きいならば、確率は0
-  if (m.isNeg() || m.gt(n)) {
+  if (m < 0 || m > n) {
     return ZERO;
   }
 
   // それ以外の場合
   const temp1 = combination(n, m);
   const temp2 = p.pow(m);
-  const temp3 = ONE.sub(p).pow(n.sub(m));
+  const temp3 = ONE.sub(p).pow(n - m);
   return temp1.mul(temp2).mul(temp3);
 };
 
@@ -61,10 +62,10 @@ const calcBinomialPDF = (m: Decimal, p: Decimal, n: Decimal): Decimal => {
  * @param x p値を計算したい公称ドロップ率
  * @returns p値
  */
-const calcPvalueBySterne = (a: Decimal, b: Decimal, x: Decimal) => {
+const calcPvalueBySterne = (a: number, b: number, x: Decimal) => {
   const limitProb = calcBinomialPDF(a, x, b);
   let sum = ZERO;
-  for (let i = ZERO; i.lte(b); i = i.add(ONE)) {
+  for (let i = 0; i <= b; i++) {
     const temp = calcBinomialPDF(i, x, b);
     if (limitProb.gte(temp)) {
       sum = sum.add(temp);
@@ -106,15 +107,16 @@ const findByBisection = (minX: Decimal, maxX: Decimal, func: (x: Decimal) => Dec
  * @param b 二項分布における試行回数(ガチャ回数)
  * @param ciPer 信頼区間のパーセンテージ
  */
-const calcConfidenceIntervalBySterne = (a: Decimal, b: Decimal, ciPer: Decimal): [Decimal, Decimal] => {
+const calcConfidenceIntervalBySterne = (a: number, b: number, ciPer: Decimal): [Decimal, Decimal] => {
   const param = ONE.sub(ciPer.div(100)).div(2);
+  const prob = new Decimal(a).div(new Decimal(b));
   // 下限の算出を行う
-  const ciLB = findByBisection(ZERO, a.div(b), (x: Decimal) => {
+  const ciLB = findByBisection(ZERO, prob, (x: Decimal) => {
     return calcPvalueBySterne(a, b, x).sub(param);
   }, EPS);
 
   // 上限の算出を行う
-  const ciUB = findByBisection(a.div(b), ONE, (x: Decimal) => {
+  const ciUB = findByBisection(prob, ONE, (x: Decimal) => {
     return calcPvalueBySterne(a, b, x).sub(param);
   }, EPS);
   return [ciLB, ciUB];
@@ -132,15 +134,15 @@ export const useTestProbStore = (): TestProbStore => {
   useEffect(() => {
     try {
       // ドロップ率の計算
-      const a = new Decimal(dropCount);
-      const b = new Decimal(gachaCount);
-      if (b.lte(0) || a.lt(0) || a.gt(b)) {
+      const a = parseInt(dropCount, 10);
+      const b = parseInt(gachaCount, 10);
+      if (b <= 0 || a < 0 || a > b) {
         setDropPer('---');
         setConfidenceInterval(['---', '---']);
         setPValue('---');
         return;
       }
-      const prob = a.div(b);
+      const prob = new Decimal(a).div(new Decimal(b));
       if (prob.lt(0)) {
         setDropPer('---');
         setConfidenceInterval(['---', '---']);
