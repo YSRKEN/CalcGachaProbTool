@@ -96,16 +96,15 @@ const findByBisection = (minX: Decimal, maxX: Decimal, func: (x: Decimal) => Dec
   let x1 = minX;
   let x2 = maxX;
   let x3 = minX;
-  let y1 = func(x1);
+  let y1Sign = func(x1).isPos();
   while (x2.sub(x1).gt(eps)) {
     x3 = x1.add(x2).div(2);
-    const y3 = func(x3);
-    if (y1.mul(y3).lt(ZERO)) {
+    const y3Sign = func(x3).isPos();
+    if (y1Sign !== y3Sign) {
       x2 = x3;
     }
     else {
       x1 = x3;
-      y1 = func(x1);
     }
   }
   return x3;
