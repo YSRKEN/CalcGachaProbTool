@@ -24,25 +24,25 @@ interface TestProbStore {
  * @param b bの値
  */
 const combination = (a: number, b: number): Decimal => {
-  /* 以下、簡易コード */
-  let result: number = 1.0;
-  for (let num1 = a, num2 = b, r = 0; r < b; --num1, --num2, ++r) {
-    result *= 1.0 * num1;
-    result /= 1.0 * num2;
+  if (false) {
+    let temp1 = new Decimal('1');
+    for (let num1 = a, r = 0; r < b; num1--, r++) {
+      temp1 = temp1.mul(num1);
+    }
+    let temp2 = new Decimal('1');
+    for (let num2 = b, r = 0; r < b; num2--, r++) {
+      temp2 = temp2.mul(num2);
+    }
+    return temp1.div(temp2);
+  } else {
+    /* 以下、簡易コード */
+    let result: number = 1.0;
+    for (let num1 = a, num2 = b, r = 0; r < b; --num1, --num2, ++r) {
+      result *= 1.0 * num1;
+      result /= 1.0 * num2;
+    }
+    return new Decimal(result);
   }
-  return new Decimal(result);
-
-  /* 以下、正式なコード
-  let temp1 = new Decimal('1');
-  for (let num1 = a, r = 0; r < b; num1--, r++) {
-    temp1 = temp1.mul(num1);
-  }
-  let temp2 = new Decimal('1');
-  for (let num2 = b, r = 0; r < b; num2--, r++) {
-    temp2 = temp2.mul(num2);
-  }
-  return temp1.div(temp2);
-  */
 }
 
 /**
@@ -146,7 +146,7 @@ export const useTestProbStore = (): TestProbStore => {
       // ドロップ率の計算
       const a = parseInt(dropCount, 10);
       const b = parseInt(gachaCount, 10);
-      if (b <= 0 || a < 0 || a > b) {
+      if (b <= 0 || a < 0 || a > b || b > 1000) {
         setDropPer('---');
         setConfidenceInterval(['---', '---']);
         setPValue('---');

@@ -8,7 +8,7 @@ const TestProb: React.FC = () => {
   return <Form>
     <Form.Group>
       <Form.Label>ガチャ回数</Form.Label>
-      <Form.Control placeholder="0以上の整数を入力" value={gachaCount} onChange={(e: ChangeEvent<HTMLInputElement>) => {
+      <Form.Control placeholder="0以上1000以下の整数を入力" value={gachaCount} onChange={(e: ChangeEvent<HTMLInputElement>) => {
         dispatch({ type: 'setGachaCount', message: e.currentTarget.value });
       }} />
     </Form.Group>
