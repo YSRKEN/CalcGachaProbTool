@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "target": "calc-gacha-prob-tool",
+    "public": "build",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

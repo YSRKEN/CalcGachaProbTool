@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "zwsptools"
+  },
+  "targets": {
+    "zwsptools": {
+      "hosting": {
+        "calc-gacha-prob-tool": [
+          "new-calc-gacha-prob-tool"
+        ]
+      }
+    }
+  }
+}
