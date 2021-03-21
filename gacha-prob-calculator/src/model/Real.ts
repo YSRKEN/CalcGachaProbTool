@@ -38,6 +38,36 @@ interface Real {
    * @param value べき乗の指数
    */
   pow(value: Real | number | string): Real;
+  /**
+   * 比較演算(引数より小さい場合はtrue)
+   * @param value 引数
+   */
+  lt(value: Real | number | string): boolean;
+  /**
+   * 比較演算(引数以下の場合はtrue)
+   * @param value 引数
+   */
+  lte(value: Real | number | string): boolean;
+  /**
+   * 比較演算(引数より大きい場合はtrue)
+   * @param value 引数
+   */
+  gt(value: Real | number | string): boolean;
+  /**
+   * 比較演算(引数以上の場合はtrue)
+   * @param value 引数
+   */
+  gte(value: Real | number | string): boolean;
+  /**
+   * 比較演算(引数と等しい場合はtrue)
+   * @param value 引数
+   */
+  equal(value: Real | number | string): boolean;
+  /**
+   * NaNならばtrue
+   * @param value 引数
+   */
+  isNaN(): boolean;
 }
 
 export default Real;

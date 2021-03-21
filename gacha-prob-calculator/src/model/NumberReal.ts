@@ -43,7 +43,7 @@ export class NumberReal implements Real {
   base: number;   // 基準となる整数項
   error: number;  // 誤差項
 
-  constructor(value: string | number | Real = '0') {
+  constructor(value: string | number | Real = '0', value2: number = -1) {
     if (value instanceof NumberReal) {
       this.base = value.base;
       this.error = value.error;
@@ -55,8 +55,13 @@ export class NumberReal implements Real {
       return;
     }
     if (typeof value === 'number') {
-      this.base = value;
-      this.error = 0;
+      if (value2 < 0) {
+        this.base = value;
+        this.error = 0;
+      } else {
+        this.base = value;
+        this.error = value2;
+      }
       return;
     }
     throw new Error('型エラーが発生しました.');
@@ -94,12 +99,11 @@ export class NumberReal implements Real {
     // KnuthのTwoSumアルゴリズムを利用して加算を行う
     const [a1, a2] = calcTwoSum(this.base, inputValue);
 
-    this.base = a1;
-    this.error = this.error + Math.abs(a2);
+    let a3 = this.error + Math.abs(a2);
     if (value instanceof NumberReal) {
-      this.error += value.error;
+      a3 += value.error;
     }
-    return this;
+    return new NumberReal(a1, a3);
   }
 
   sub(value: string | number | Real): Real {
@@ -118,12 +122,11 @@ export class NumberReal implements Real {
     // KnuthのTwoSumアルゴリズムを利用して減算を行う
     const [a1, a2] = calcTwoSum(this.base, -inputValue);
 
-    this.base = a1;
-    this.error = this.error + Math.abs(a2);
+    let a3 = this.error + Math.abs(a2);
     if (value instanceof NumberReal) {
-      this.error += value.error;
+      a3 += value.error;
     }
-    return this;
+    return new NumberReal(a1, a3);
   }
 
   mul(value: string | number | Real): Real {
@@ -142,13 +145,13 @@ export class NumberReal implements Real {
     // Dekkerの乗算アルゴリズムを利用して乗算を行う
     const [m1, m2] = calcTwoProduct(this.base, inputValue);
 
-    this.base = m1;
+    let m3 = 0;
     if (value instanceof NumberReal) {
-      this.error = (this.error / Math.abs(this.base) + value.error / Math.abs(value.base)) * Math.abs(m1) + Math.abs(m2);
+      m3 = (this.error / Math.abs(this.base) + value.error / Math.abs(value.base)) * Math.abs(m1) + Math.abs(m2);
     } else {
-      this.error = (this.error / Math.abs(this.base)) * Math.abs(m1) + Math.abs(m2);
+      m3 = (this.error / Math.abs(this.base)) * Math.abs(m1) + Math.abs(m2);
     }
-    return this;
+    return new NumberReal(m1, m3);
   }
 
   div(value: string | number | Real): Real {
@@ -167,13 +170,13 @@ export class NumberReal implements Real {
     // Dekkerの乗算アルゴリズムを利用して除算を行う
     const [m1, m2] = calcTwoProduct(this.base, 1.0 / inputValue);
 
-    this.base = m1;
+    let m3 = 0;
     if (value instanceof NumberReal) {
-      this.error = (this.error / Math.abs(this.base) + value.error / Math.abs(value.base)) * Math.abs(m1) + Math.abs(m2);
+      m3 = (this.error / Math.abs(this.base) + value.error / Math.abs(value.base)) * Math.abs(m1) + Math.abs(m2);
     } else {
-      this.error = (this.error / Math.abs(this.base)) * Math.abs(m1) + Math.abs(m2);
+      m3 = (this.error / Math.abs(this.base)) * Math.abs(m1) + Math.abs(m2);
     }
-    return this;
+    return new NumberReal(m1, m3);
   }
 
   pow(value: string | number | Real): Real {
@@ -201,7 +204,7 @@ export class NumberReal implements Real {
       case 1:
         return this;
       case 2:
-        return this.mul(new NumberReal(this));
+        return this.mul(this);
       default: {
         let retValue = new NumberReal(1);
         let x = new NumberReal(this);
@@ -209,11 +212,95 @@ export class NumberReal implements Real {
           if (inputValue & 1) {
             retValue = retValue.mul(x) as NumberReal;
           }
-          x = x.mul(new NumberReal(x)) as NumberReal;
+          x = x.mul(x) as NumberReal;
           inputValue >>= 1;
         }
         return retValue;
       }
     }
+  }
+
+  lt(value: Real | number | string): boolean {
+    // 判定用の値(Number型)を取得する
+    let inputValue = 0;
+    if (value instanceof NumberReal) {
+      inputValue = value.base;
+    } else if (typeof value === 'string') {
+      inputValue = parseFloat(value);
+    } else if (typeof value === 'number') {
+      inputValue = value;
+    } else {
+      throw new Error('型エラーが発生しました.');
+    }
+
+    return this.base < inputValue;
+  }
+
+  lte(value: Real | number | string): boolean {
+    // 判定用の値(Number型)を取得する
+    let inputValue = 0;
+    if (value instanceof NumberReal) {
+      inputValue = value.base;
+    } else if (typeof value === 'string') {
+      inputValue = parseFloat(value);
+    } else if (typeof value === 'number') {
+      inputValue = value;
+    } else {
+      throw new Error('型エラーが発生しました.');
+    }
+
+    return this.base <= inputValue;
+  }
+
+  gt(value: Real | number | string): boolean {
+    // 判定用の値(Number型)を取得する
+    let inputValue = 0;
+    if (value instanceof NumberReal) {
+      inputValue = value.base;
+    } else if (typeof value === 'string') {
+      inputValue = parseFloat(value);
+    } else if (typeof value === 'number') {
+      inputValue = value;
+    } else {
+      throw new Error('型エラーが発生しました.');
+    }
+
+    return this.base > inputValue;
+  }
+
+  gte(value: Real | number | string): boolean {
+    // 判定用の値(Number型)を取得する
+    let inputValue = 0;
+    if (value instanceof NumberReal) {
+      inputValue = value.base;
+    } else if (typeof value === 'string') {
+      inputValue = parseFloat(value);
+    } else if (typeof value === 'number') {
+      inputValue = value;
+    } else {
+      throw new Error('型エラーが発生しました.');
+    }
+
+    return this.base >= inputValue;
+  }
+
+  equal(value: Real | number | string): boolean {
+    // 判定用の値(Number型)を取得する
+    let inputValue = 0;
+    if (value instanceof NumberReal) {
+      inputValue = value.base;
+    } else if (typeof value === 'string') {
+      inputValue = parseFloat(value);
+    } else if (typeof value === 'number') {
+      inputValue = value;
+    } else {
+      throw new Error('型エラーが発生しました.');
+    }
+
+    return this.base === inputValue;
+  }
+
+  isNaN(): boolean {
+    return isNaN(this.base);
   }
 }

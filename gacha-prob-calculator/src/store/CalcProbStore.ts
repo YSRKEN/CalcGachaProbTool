@@ -1,10 +1,12 @@
 import { createContext, useEffect, useState } from "react";
-import Decimal from 'decimal.js';
-import { ONE, PROB_50_PER, PROB_95_PER, PROB_99_PER } from "../constant/other";
 import { NumberReal as Real } from "../model/NumberReal";
 
 type ActionType = 'setDropPer' | 'setGachaCount' | 'addGachaCount';
 
+export const ONE = new Real('1');
+export const PROB_50_PER = new Real('0.5');
+export const PROB_95_PER = new Real('0.95');
+export const PROB_99_PER = new Real('0.99');
 
 interface Action {
   type: ActionType;
@@ -33,42 +35,11 @@ export const useCalcProbStore = (): CalcProbStore => {
 
   useEffect(() => {
     try {
-      // 浮動小数点数演算のテスト
-      console.log('加算');
-      const a = new Real();
-      for (let i = 0; i < 100; i++) {
-        a.add('0.1');
-      }
-      console.log(a.getInfo());
-
-      console.log('減算');
-      for (let i = 0; i < 100; i++) {
-        a.sub('0.1');
-      }
-      console.log(a.getInfo());
-
-      console.log('乗算');
-      const b = new Real(1);
-      for (let i = 0; i < 100; i++) {
-        b.mul('1.1');
-      }
-      console.log(b.getInfo());
-
-      console.log('除算');
-      for (let i = 0; i < 100; i++) {
-        b.div('1.1');
-      }
-      console.log(b.getInfo());
-
-      console.log('べき乗');
-      console.log((new Real('1.1')).pow(0).getInfo());
-      console.log((new Real('1.1')).pow(1).getInfo());
-      console.log((new Real('1.1')).pow(2).getInfo());
-      console.log((new Real('1.1')).pow(3).getInfo());
-      console.log((new Real('1.1')).pow(100).getInfo());
-
       // ドロップ率の計算
-      const xPer = new Decimal(dropPer);
+      const xPer = new Real(dropPer);
+      if (xPer.isNaN()) {
+        throw new Error('読み取り時にエラーが発生しました.');
+      }
       const x = xPer.div(100);
       if (x.lt(0)) {
         setAnyDropPer('---');
@@ -78,11 +49,12 @@ export const useCalcProbStore = (): CalcProbStore => {
         setGachaCount99Per('---');
         return;
       }
-      const n = new Decimal(gachaCount).round();
-      if (n.gte(0)) {
+      const n = parseInt(gachaCount, 10);
+      if (n >= 0) {
         const prob = ONE.sub(ONE.sub(x).pow(n));
-        setAnyDropPer(prob.mul(100).toFixed(2));
-        setNotDropPer(ONE.sub(prob).mul(100).toFixed(2));
+        console.log(`${prob.getInfo()}`);
+        setAnyDropPer(prob.mul(100).toString(2));
+        setNotDropPer(ONE.sub(prob).mul(100).toString(2));
       } else {
         setAnyDropPer('---');
         setNotDropPer('---');
@@ -136,7 +108,7 @@ export const useCalcProbStore = (): CalcProbStore => {
       case 'addGachaCount': {
         const diff = parseInt((action.message as string), 10);
         try {
-          const n = new Decimal(gachaCount).round().add(diff);
+          const n = parseInt(gachaCount, 10) + diff;
           setGachaCount(n.toString());
         } catch { }
         break;
