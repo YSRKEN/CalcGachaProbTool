@@ -48,11 +48,21 @@ const calcBinomialPDF = (m: number, p: Real, n: number): Real => {
     return ZERO;
   }
 
+  // pが0以下ならば確率は0とする
+  if (p.lte(0)) {
+    return ZERO;
+  }
+
   // それ以外の場合
   const temp1 = combination(n, m);
   const temp2 = p.pow(m);
   const temp3 = ONE.sub(p).pow(n - m);
-  return temp1.mul(temp2).mul(temp3) as Real;
+  const temp = temp1.mul(temp2).mul(temp3) as Real;
+  if (temp.toNumber() <= 1.0e-20) {  // 特殊処理
+    return ZERO;
+  } else {
+    return temp;
+  }
 };
 
 /**
@@ -69,6 +79,9 @@ const calcPvalueBySterne = (a: number, b: number, x: Real) => {
     const temp = calcBinomialPDF(i, x, b);
     if (limitProb.gte(temp)) {
       sum = sum.add(temp) as Real;
+      if (temp.equal(ZERO)) {
+        break;
+      }
     }
   }
   return sum;
