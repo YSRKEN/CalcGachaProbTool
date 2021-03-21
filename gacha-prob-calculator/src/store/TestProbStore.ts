@@ -1,6 +1,10 @@
-import Decimal from "decimal.js";
 import { createContext, useEffect, useState } from "react";
-import { CONFIDENCE_INTERVAL_PER, EPS, ONE, ZERO } from "../constant/other";
+import { NumberReal as Real } from "../model/NumberReal";
+
+export const ZERO = new Real('0');
+export const ONE = new Real('1');
+export const CONFIDENCE_INTERVAL_PER = new Real('95');  // 今回は95％信頼区間を用いるのでこうした
+export const EPS = new Real('0.00001');
 
 type ActionType = 'setGachaCount' | 'setDropCount' | 'setOfficialDropPer';
 
@@ -23,26 +27,12 @@ interface TestProbStore {
  * @param a aの値
  * @param b bの値
  */
-const combination = (a: number, b: number): Decimal => {
-  if (false) {
-    let temp1 = new Decimal('1');
-    for (let num1 = a, r = 0; r < b; num1--, r++) {
-      temp1 = temp1.mul(num1);
-    }
-    let temp2 = new Decimal('1');
-    for (let num2 = b, r = 0; r < b; num2--, r++) {
-      temp2 = temp2.mul(num2);
-    }
-    return temp1.div(temp2);
-  } else {
-    /* 以下、簡易コード */
-    let result: number = 1.0;
-    for (let num1 = a, num2 = b, r = 0; r < b; --num1, --num2, ++r) {
-      result *= 1.0 * num1;
-      result /= 1.0 * num2;
-    }
-    return new Decimal(result);
+const combination = (a: number, b: number): Real => {
+  let result = ONE;
+  for (let num1 = a, num2 = b, r = 0; r < b; --num1, --num2, ++r) {
+    result = result.mul(num1).div(num2) as Real;
   }
+  return result;
 }
 
 /**
@@ -52,7 +42,7 @@ const combination = (a: number, b: number): Decimal => {
  * @param p 二項分布の1試行における成功確率。0≦p≦1
  * @param n 二項分布における試行回数。n≧m、m∈Z
  */
-const calcBinomialPDF = (m: number, p: Decimal, n: number): Decimal => {
+const calcBinomialPDF = (m: number, p: Real, n: number): Real => {
   // mが負の数、もしくはmがnより大きいならば、確率は0
   if (m < 0 || m > n) {
     return ZERO;
@@ -62,7 +52,7 @@ const calcBinomialPDF = (m: number, p: Decimal, n: number): Decimal => {
   const temp1 = combination(n, m);
   const temp2 = p.pow(m);
   const temp3 = ONE.sub(p).pow(n - m);
-  return temp1.mul(temp2).mul(temp3);
+  return temp1.mul(temp2).mul(temp3) as Real;
 };
 
 /**
@@ -72,13 +62,13 @@ const calcBinomialPDF = (m: number, p: Decimal, n: number): Decimal => {
  * @param x p値を計算したい公称ドロップ率
  * @returns p値
  */
-const calcPvalueBySterne = (a: number, b: number, x: Decimal) => {
+const calcPvalueBySterne = (a: number, b: number, x: Real) => {
   const limitProb = calcBinomialPDF(a, x, b);
   let sum = ZERO;
   for (let i = 0; i <= b; i++) {
     const temp = calcBinomialPDF(i, x, b);
     if (limitProb.gte(temp)) {
-      sum = sum.add(temp);
+      sum = sum.add(temp) as Real;
     }
   }
   return sum;
@@ -92,13 +82,13 @@ const calcPvalueBySterne = (a: number, b: number, x: Decimal) => {
  * @param func 関数
  * @param eps しきい値
  */
-const findByBisection = (minX: Decimal, maxX: Decimal, func: (x: Decimal) => Decimal, eps: Decimal): Decimal => {
+const findByBisection = (minX: Real, maxX: Real, func: (x: Real) => Real, eps: Real): Real => {
   let x1 = minX;
   let x2 = maxX;
   let x3 = minX;
   let y1Sign = func(x1).isPos();
   while (x2.sub(x1).gt(eps)) {
-    x3 = x1.add(x2).div(2);
+    x3 = x1.add(x2).div(2) as Real;
     const y3Sign = func(x3).isPos();
     if (y1Sign !== y3Sign) {
       x2 = x3;
@@ -116,17 +106,17 @@ const findByBisection = (minX: Decimal, maxX: Decimal, func: (x: Decimal) => Dec
  * @param b 二項分布における試行回数(ガチャ回数)
  * @param ciPer 信頼区間のパーセンテージ
  */
-const calcConfidenceIntervalBySterne = (a: number, b: number, ciPer: Decimal): [Decimal, Decimal] => {
+const calcConfidenceIntervalBySterne = (a: number, b: number, ciPer: Real): [Real, Real] => {
   const param = ONE.sub(ciPer.div(100)).div(2);
-  const prob = new Decimal(a).div(new Decimal(b));
+  const prob = new Real(a).div(b) as Real;
   // 下限の算出を行う
-  const ciLB = findByBisection(ZERO, prob, (x: Decimal) => {
-    return calcPvalueBySterne(a, b, x).sub(param);
+  const ciLB = findByBisection(ZERO, prob, (x: Real): Real => {
+    return calcPvalueBySterne(a, b, x).sub(param) as Real;
   }, EPS);
 
   // 上限の算出を行う
-  const ciUB = findByBisection(prob, ONE, (x: Decimal) => {
-    return calcPvalueBySterne(a, b, x).sub(param);
+  const ciUB = findByBisection(prob, ONE, (x: Real): Real => {
+    return calcPvalueBySterne(a, b, x).sub(param) as Real;
   }, EPS);
   return [ciLB, ciUB];
 };
@@ -151,30 +141,35 @@ export const useTestProbStore = (): TestProbStore => {
         setPValue('---');
         return;
       }
-      const prob = new Decimal(a).div(new Decimal(b));
+      const prob = new Real(a).div(b);
       if (prob.lt(0)) {
         setDropPer('---');
         setConfidenceInterval(['---', '---']);
         setPValue('---');
         return;
       }
-      setDropPer(prob.mul(100).toFixed(2));
+      setDropPer(prob.mul(100).toString(2));
 
       /* p値の計算                                                     */
       /* 「検定と区間推定」                                            */
       /* (https://oku.edu.mie-u.ac.jp/~okumura/stat/tests_and_CI.html) */
       /* を参考に、Sterneの手法に基づく正確なp値を実装した */
-      const x = new Decimal(officialDropPer).div(100);
+      const x = new Real(officialDropPer).div(100) as Real;
       const result2 = calcPvalueBySterne(a, b, x);
-      setPValue(result2.toFixed(3));
+      console.log('【公称ドロップ率のp値】');
+      console.log(result2.getInfo());
+      setPValue(result2.toString(3));
 
       /* 95％信頼区間の計算                    */
       /* ↑を応用して、正確な信頼区間を実装した */
       const result = calcConfidenceIntervalBySterne(a, b, CONFIDENCE_INTERVAL_PER);
       setConfidenceInterval([
-        result[0].mul(100).toFixed(2),
-        result[1].mul(100).toFixed(2)
+        result[0].mul(100).toString(2),
+        result[1].mul(100).toString(2)
       ]);
+      console.log('【ドロップ率の95％信頼区間[％]】');
+      console.log(result[0].mul(100).getInfo());
+      console.log(result[1].mul(100).getInfo());
     } catch {
       setDropPer('---');
       setConfidenceInterval(['---', '---']);

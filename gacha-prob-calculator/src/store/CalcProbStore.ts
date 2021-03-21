@@ -52,7 +52,10 @@ export const useCalcProbStore = (): CalcProbStore => {
       const n = parseInt(gachaCount, 10);
       if (n >= 0) {
         const prob = ONE.sub(ONE.sub(x).pow(n));
-        console.log(`${prob.getInfo()}`);
+        console.log('【1枚以上ドロップする確率[％]】');
+        console.log(`${prob.mul(100).getInfo()}`);
+        console.log('【1枚もドロップしない確率[％]】');
+        console.log(`${ONE.sub(prob).mul(100).getInfo()}`);
         setAnyDropPer(prob.mul(100).toString(2));
         setNotDropPer(ONE.sub(prob).mul(100).toString(2));
       } else {

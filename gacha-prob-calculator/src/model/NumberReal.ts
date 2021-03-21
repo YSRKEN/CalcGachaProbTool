@@ -303,4 +303,8 @@ export class NumberReal implements Real {
   isNaN(): boolean {
     return isNaN(this.base);
   }
+
+  isPos(): boolean {
+    return this.base >= 0;
+  }
 }

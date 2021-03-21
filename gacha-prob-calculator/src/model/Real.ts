@@ -68,6 +68,11 @@ interface Real {
    * @param value 引数
    */
   isNaN(): boolean;
+  /**
+   * 正の数ならばtrue
+   * @param value 引数
+   */
+  isPos(): boolean;
 }
 
 export default Real;
