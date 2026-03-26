@@ -14,3 +14,4 @@
 - 併せて `package.json` の `e2e` スクリプトを削除し、現行運用（build/test/lint）に合わせた。
 - `CalcGachaProbTool/package.json` に `overrides` を追加し、`picomatch` と `undici` を安全版へ固定。
 - `package-lock.json` を再解決し、Angular 側の残存アラート（`picomatch` / `undici`）の解消を狙う。
+- `undici` は初回固定値が脆弱範囲内だったため、`7.24.0` へ再固定して `CalcGachaProbTool` 側の監査結果を `0 vulnerabilities` に更新。
