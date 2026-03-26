@@ -10,6 +10,8 @@
   - Serena MCP のプロジェクト情報やメモリを保持します。
 - `.vscode/`
   - VS Code のワークスペース設定を保持します。
+- `.github/workflows/`
+  - Pull Request / master push 時に実行する CI 設定を保持します。
 - `CalcGachaProbTool/`
   - Angular 6 ベースの実装です。旧構成のアプリ本体があります。
 - `gacha-prob-calculator/`
@@ -49,3 +51,4 @@
 
 - ルートの `README.md` はアプリの目的と機能説明です。
 - 実装は Angular 版と React 版が共存しているため、作業対象ディレクトリを先に確認してください。
+- CI は `.github/workflows/ci.yml` で管理し、Angular/React を別ジョブで実行します。
