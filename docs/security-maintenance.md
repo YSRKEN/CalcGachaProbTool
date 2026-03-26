@@ -12,3 +12,5 @@
 - ローカルの `npm run build` は Node.js 24 環境で `loader-runner` 由来の既知エラー（`callback was already called`）を確認。Angular 旧世代依存のため、CI判定は既存方針どおり React ジョブ中心で継続。
 - `CalcGachaProbTool` の E2E 依存（`protractor`, `@types/jasminewd2`）を削除し、`request` 系の旧トランジティブ依存を縮退。
 - 併せて `package.json` の `e2e` スクリプトを削除し、現行運用（build/test/lint）に合わせた。
+- `CalcGachaProbTool/package.json` に `overrides` を追加し、`picomatch` と `undici` を安全版へ固定。
+- `package-lock.json` を再解決し、Angular 側の残存アラート（`picomatch` / `undici`）の解消を狙う。
