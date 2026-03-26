@@ -16,6 +16,9 @@
     "test:ci": "vitest run",
     "preview": "vite preview"
   },
+  "overrides": {
+    "esbuild": "^0.25.0"
+  },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.7.0",
     "@testing-library/react": "^16.0.1",
