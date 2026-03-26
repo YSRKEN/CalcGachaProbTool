@@ -49,20 +49,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: yarn
-          cache-dependency-path: gacha-prob-calculator/yarn.lock
-
-      - name: Enable Corepack
-        run: corepack enable
+          node-version: 20
+          cache: npm
+          cache-dependency-path: gacha-prob-calculator/package-lock.json
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Build
         env:
           CI: false
-        run: yarn build
+        run: npm run build
 
       - name: Test
-        run: CI=true yarn test --watchAll=false
+        run: npm run test:ci
