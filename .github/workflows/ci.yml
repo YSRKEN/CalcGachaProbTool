@@ -9,6 +9,7 @@ on:
 jobs:
   angular:
     name: Angular (CalcGachaProbTool)
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     continue-on-error: true
     defaults:
