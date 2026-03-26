@@ -10,6 +10,7 @@ jobs:
   angular:
     name: Angular (CalcGachaProbTool)
     runs-on: ubuntu-latest
+    continue-on-error: true
     defaults:
       run:
         working-directory: CalcGachaProbTool

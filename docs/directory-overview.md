@@ -53,3 +53,4 @@
 - 実装は Angular 版と React 版が共存しているため、作業対象ディレクトリを先に確認してください。
 - CI は `.github/workflows/ci.yml` で管理し、Angular/React を別ジョブで実行します。
 - CI の実行環境は、Angular を Node 10、React を Node 18 として分離しています。
+- Angular ジョブは既存依存更新で不安定なため、当面は non-blocking（失敗時もPR全体をブロックしない）で運用します。
