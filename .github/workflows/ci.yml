@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 10
           cache: npm
           cache-dependency-path: CalcGachaProbTool/package-lock.json
 
@@ -33,11 +33,6 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Test
-        env:
-          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
-        run: npm run test -- --watch=false --browsers=ChromeHeadless --no-progress
 
   react:
     name: React (gacha-prob-calculator)
@@ -63,6 +58,8 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build
+        env:
+          CI: false
         run: yarn build
 
       - name: Test

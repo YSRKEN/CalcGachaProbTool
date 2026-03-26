@@ -3,3 +3,12 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+
+if (typeof global.clearImmediate === 'undefined') {
+  global.clearImmediate = ((id: NodeJS.Timeout) => clearTimeout(id)) as typeof clearImmediate;
+}
+
+if (typeof global.setImmediate === 'undefined') {
+  global.setImmediate = ((callback: (...args: any[]) => void, ...args: any[]) =>
+    setTimeout(callback, 0, ...args)) as typeof setImmediate;
+}
