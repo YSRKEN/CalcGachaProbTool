@@ -15,3 +15,7 @@
 - `CalcGachaProbTool/package.json` に `overrides` を追加し、`picomatch` と `undici` を安全版へ固定。
 - `package-lock.json` を再解決し、Angular 側の残存アラート（`picomatch` / `undici`）の解消を狙う。
 - `undici` は初回固定値が脆弱範囲内だったため、`7.24.0` へ再固定して `CalcGachaProbTool` 側の監査結果を `0 vulnerabilities` に更新。
+- `gacha-prob-calculator` は CRA (`react-scripts`) から Vite + React 18 + Vitest へ移行。
+- React 側の依存管理を `npm` に統一し、`yarn.lock` を廃止して `package-lock.json` を正規ロックファイルに変更。
+- CI の React ジョブを Node 20 + npm 実行（`npm ci` / `npm run build` / `npm run test:ci`）へ更新。
+- Dependabot を `CalcGachaProbTool` / `gacha-prob-calculator` の npm 監視で有効化し、継続的な依存更新体制を確立。
