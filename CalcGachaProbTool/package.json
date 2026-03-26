@@ -6,8 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -36,7 +35,6 @@
     "@angular/compiler-cli": "^21.2.6",
     "@angular/language-service": "^6.0.3",
     "@types/jasmine": "~2.8.6",
-    "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
     "bootstrap": "^5.0.0",
     "codelyzer": "~4.2.1",
@@ -49,7 +47,6 @@
     "karma-jasmine": "~1.1.1",
     "karma-jasmine-html-reporter": "^0.2.2",
     "popper.js": "^1.14.3",
-    "protractor": "~5.4.4",
     "ts-node": "~5.0.1",
     "tslint": "~5.9.1",
     "typescript": "~2.7.2"
