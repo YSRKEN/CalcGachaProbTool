@@ -19,3 +19,6 @@
 - React 側の依存管理を `npm` に統一し、`yarn.lock` を廃止して `package-lock.json` を正規ロックファイルに変更。
 - CI の React ジョブを Node 20 + npm 実行（`npm ci` / `npm run build` / `npm run test:ci`）へ更新。
 - Dependabot を `CalcGachaProbTool` / `gacha-prob-calculator` の npm 監視で有効化し、継続的な依存更新体制を確立。
+- `gacha-prob-calculator/package.json` に `overrides.esbuild` を追加し、`esbuild` を `0.25.0` 以上へ固定して残存 Dependabot alert を解消。
+- Code scanning 指摘に対応するため、`ci.yml` に最小権限（`permissions: contents: read`）を明示。
+- `CalcGachaProbTool/src/index.html` の外部 CDN スクリプト読み込みを削除し、`js/functionality-from-untrusted-source` 指摘を解消。
