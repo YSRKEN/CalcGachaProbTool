@@ -54,3 +54,4 @@
 - CI は `.github/workflows/ci.yml` で管理し、Angular/React を別ジョブで実行します。
 - CI の実行環境は、Angular を Node 10、React を Node 18 として分離しています。
 - Angular ジョブは既存依存更新で不安定なため、当面は non-blocking（失敗時もPR全体をブロックしない）で運用します。
+- 依存更新期間中は、Angular ジョブを `push(master)` 時のみ実行し、PR では React/CodeQL を優先して検証します。
