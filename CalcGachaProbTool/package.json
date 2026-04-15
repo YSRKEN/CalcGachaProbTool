@@ -21,7 +21,7 @@
     "@angular/platform-browser": "^6.0.3",
     "@angular/platform-browser-dynamic": "^6.0.3",
     "@angular/platform-server": "^6.0.3",
-    "@angular/pwa": "^21.2.3",
+    "@angular/pwa": "^21.2.7",
     "@angular/router": "^6.0.3",
     "@angular/service-worker": "^6.0.3",
     "core-js": "^2.5.4",
